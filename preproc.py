@@ -4,7 +4,6 @@ import h5py
 import scipy.io 
 import glob
 import tensorflow as tf
-import matplotlib.pyplot as plt
 
 #obten todos los archivos matlab de la carpeta
 matfiles = glob.glob('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/Preprocesseddatamat/*.mat')
@@ -40,19 +39,22 @@ for mat_file in data:
             dato_segundo = dato_segundo.transpose()
             #print("Vamos en el segundo ", segundo)
             #print("La etiqueta a evaluar es ", n_label)
-            dato_p_mat = {"data": dato_segundo}
+            
             #print(labels[n_label])
             if labels[n_label] == 'LIGERA':
                 #print('Vamos a guardar porque es ligera')
+                dato_p_mat = {"data": dato_segundo, "label": 0}
                 arc_nombre = '/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/ligera/ligera_' +  str(n_ligera) + '.mat'
                 scipy.io.savemat(arc_nombre, dato_p_mat)
                 n_ligera = n_ligera + 1
             elif labels[n_label] == 'MODERADA':
                 #print('Vamos a guardar porque es moderada')
+                dato_p_mat = {"data": dato_segundo, "label": 1}
                 arc_nombre = '/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/moderada/moderada_' +  str(n_moderada) + '.mat'
                 scipy.io.savemat(arc_nombre, dato_p_mat)
                 n_moderada = n_moderada + 1
             elif labels[n_label] == 'NORMAL':
+                dato_p_mat = {"data": dato_segundo, "label": 2}
                 #print('Vamos a guardar porque es Normal')
                 arc_nombre = '/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/normal/normal_' +  str(n_normal) + '.mat'
                 ##print("el nombre de archivo es " + arc_nombre)
@@ -60,7 +62,8 @@ for mat_file in data:
                 n_normal= n_normal + 1
             elif labels[n_label] == 'SEVERA':
                 #print('Vamos a guardar porque es severa')
-                arc_nombre = '/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/severa/severa_' +  str(n_severa)
+                dato_p_mat = {"data": dato_segundo, "label": 3}
+                arc_nombre = '/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/severa/severa_' +  str(n_severa) + '.mat'
                 scipy.io.savemat(arc_nombre, dato_p_mat)
                 n_severa= n_severa + 1
             posicion = posicion + 128
