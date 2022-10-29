@@ -11,6 +11,7 @@ import torch.nn.functional as F
 import h5py
 
 import glob
+from scipy.io import loadmat
 
 
 
@@ -33,10 +34,11 @@ def write_h5file(num,nameF):
             arc_mat = loadmat(file, struct_as_record=False)
             
             # Split the song data and labels
-            data = arc_mat['data']# .flatten()
+            data = arc_mat['data'] .flatten()
             label = arc_mat['label']
 
-            #print(data)
+
+            print(data)
             #print(label)
 
 
@@ -80,9 +82,9 @@ def load_Dataset_from_h5file(h5file_path):
     return setX, setY
 
 print(len(direc))
-write_h5file(25,'train')
+#write_h5file(25,'train')
 
-write_h5file(5,'test')
+#write_h5file(5,'test')
 
 
 
@@ -115,11 +117,16 @@ def create_minibatches(x, y, mb_size, shuffle = True):
     '''
     assert x.shape[0] == y.shape[0], 'Error en cantidad de muestras'
     total_data = x.shape[0]
+    print(total_data)
     if shuffle: 
         idxs = np.arange(total_data)
+        print('El total de datos es ', total_data, 'y idxs es ', idxs)
         np.random.shuffle(idxs)
+        print(idxs)
         x = x[idxs]
         y = y[idxs]  
+        
+        
     return ((x[i:i+mb_size], y[i:i+mb_size]) for i in range(0, total_data, mb_size))
 
 
@@ -159,31 +166,32 @@ def train(model, optimiser, mb_size, epochs=10):
     model = model.to(device=device)
     for epoch in range(epochs):
         for (xi, yi) in create_minibatches(x_train_tensor, y_train_tensor, mb_size):
+            print('El xi es ', xi, ' y el yi es ', yi, 'Con tamaño ', xi.shape, ' y ', yi.shape)
             model.train()
             xi = xi.to(device=device, dtype=torch.float32)
             yi = yi.to(device=device, dtype=torch.long)
             scores = model(xi)
-            # funcion cost
-            #cost = F.cross_entropy(input= scores, target=yi.squeeze())
+            #funcion cost
+            cost = F.cross_entropy(input= scores, target=yi.squeeze())
             optimiser.zero_grad()
-            #cost.backward()
+            cost.backward()
             optimiser.step()
         
-        print(f'Epoch: {epoch}, accuracy: {accuracy(model, x_test_tensor, y_test_tensor, mb_size)}')
+        #print(f'Epoch: {epoch}, accuracy: {accuracy(model, x_test_tensor, y_test_tensor, mb_size)}')
 
-        #print(f'Epoch: {epoch}, costo: {cost.item()}, accuracy: {accuracy(model, x_val_tensor, y_val_tensor, mb_size)}')
+        print(f'Epoch: {epoch}, costo: {cost.item()}, accuracy: {accuracy(model, x_test_tensor, y_test_tensor, mb_size)}')
 
 
 
 #Instanciar modelo
 hidden1 = 1000 
 hidden = 1000
-lr = 5e-2
-epochs = 100
-mb_size = 10
-model1 = nn.Sequential(nn.Linear(in_features=128, out_features=hidden1), nn.ReLU(),
+lr = .001
+epochs = 150
+mb_size = 15
+model1 = nn.Sequential(nn.Linear(in_features=1792, out_features=hidden1), nn.ReLU(),
                        nn.Linear(in_features=hidden1, out_features=hidden), nn.ReLU(),
-                       nn.Linear(in_features=hidden, out_features=10))
+                       nn.Linear(in_features=hidden, out_features=4))
 optimiser = torch.optim.SGD(model1.parameters(), lr=lr)
 
 train(model1, optimiser, mb_size, epochs)

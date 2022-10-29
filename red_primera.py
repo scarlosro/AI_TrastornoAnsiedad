@@ -28,7 +28,7 @@ def write_h5file():
         arc_mat = loadmat(file, struct_as_record=False)
         
         # Split the song data and labels
-        data = arc_mat['data']# .flatten()
+        data = arc_mat['data'].flatten()
         label = arc_mat['label']
 
         print(data)
@@ -83,21 +83,22 @@ def normalise(x_mean, x_std, x_data):
 def red_neuro ():   
 
     # train_x, train_y = load_Dataset_from_h5file('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote_1/h5.h5')
-    train_x, train_y = load_Dataset_from_h5file('./lote_1/h5.h5')
+    train_x, train_y = load_Dataset_from_h5file('./train.h5')
     #test_x, test_y = load_Dataset_from_h5file('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote_26/h5.h5')
-    test_x, test_y = load_Dataset_from_h5file('./lote_26/h5.h5')
+    test_x, test_y = load_Dataset_from_h5file('./test.h5')
 
 
 
 #preguntar lo de las capaz
 #preguntar meter por mini batch
+#cambiar a 1d conv1d
     model = models.Sequential()
     model.add(Reshape((1,14,128), input_shape=(14, 128)))
-    model.add(layers.Conv2D(2,(1, 2), activation='relu'))
-    model.add(layers.MaxPooling2D((1, 2)))
-    model.add(layers.Conv2D(2,(1, 2), activation='relu'))
-    model.add(layers.MaxPooling2D((1, 2)))
-    model.add(layers.Conv2D(2,(1, 2), activation='relu'))
+    model.add(layers.Conv1D(2,(3), activation='relu'))
+    model.add(layers.MaxPooling1D(3))
+    model.add(layers.Conv1D(2,(3), activation='relu'))
+    model.add(layers.MaxPooling1D((3)))
+    model.add(layers.Conv1D(2,(3), activation='relu'))
     model.add(layers.Flatten())
     model.add(layers.Dense(16, activation='relu'))
     model.add(layers.Dense(4, activation='softmax'))
@@ -105,7 +106,8 @@ def red_neuro ():
                 loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                 metrics=['accuracy'])
 
-    history = model.fit(train_x, train_y, epochs=10, 
+    history = model.fit(train_x, train_y, epochs=25, 
+                        batch_size = 20,
                         validation_data=(test_x, test_y))
 
     test_loss, test_acc = model.evaluate(test_x,  test_y, verbose=2)
