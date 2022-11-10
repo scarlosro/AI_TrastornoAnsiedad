@@ -38,7 +38,7 @@ def write_h5file(num,nameF):
             label = arc_mat['label']
 
 
-            print(data)
+            #print(data)
             #print(label)
 
 
@@ -81,7 +81,7 @@ def load_Dataset_from_h5file(h5file_path):
     # Return the train, valid and test set
     return setX, setY
 
-print(len(direc))
+#print(len(direc))
 #write_h5file(25,'train')
 
 #write_h5file(5,'test')
@@ -106,8 +106,8 @@ x_test = normalise(x_mean, x_std, test_x)
 
 x_train.mean(), x_train.std()
 
-print(x_test.shape)
-print(train_y.shape)
+#print(x_test.shape)
+#print(train_y.shape)
 
 
 def create_minibatches(x, y, mb_size, shuffle = True):
@@ -117,12 +117,12 @@ def create_minibatches(x, y, mb_size, shuffle = True):
     '''
     assert x.shape[0] == y.shape[0], 'Error en cantidad de muestras'
     total_data = x.shape[0]
-    print(total_data)
+    #print(total_data)
     if shuffle: 
         idxs = np.arange(total_data)
-        print('El total de datos es ', total_data, 'y idxs es ', idxs)
+        #print('El total de datos es ', total_data, 'y idxs es ', idxs)
         np.random.shuffle(idxs)
-        print(idxs)
+        #print(idxs)
         x = x[idxs]
         y = y[idxs]  
         
@@ -166,7 +166,7 @@ def train(model, optimiser, mb_size, epochs=10):
     model = model.to(device=device)
     for epoch in range(epochs):
         for (xi, yi) in create_minibatches(x_train_tensor, y_train_tensor, mb_size):
-            print('El xi es ', xi, ' y el yi es ', yi, 'Con tamaño ', xi.shape, ' y ', yi.shape)
+            #print('El xi es ', xi, ' y el yi es ', yi, 'Con tamaño ', xi.shape, ' y ', yi.shape)
             model.train()
             xi = xi.to(device=device, dtype=torch.float32)
             yi = yi.to(device=device, dtype=torch.long)
@@ -184,15 +184,15 @@ def train(model, optimiser, mb_size, epochs=10):
 
 
 #Instanciar modelo
-hidden1 = 1000 
+hidden1 = 1000
 hidden = 1000
 lr = .001
-epochs = 150
+epochs = 30
 mb_size = 15
 model1 = nn.Sequential(nn.Linear(in_features=1792, out_features=hidden1), nn.ReLU(),
                        nn.Linear(in_features=hidden1, out_features=hidden), nn.ReLU(),
                        nn.Linear(in_features=hidden, out_features=4))
-optimiser = torch.optim.SGD(model1.parameters(), lr=lr)
+optimiser = torch.optim.Adam(model1.parameters(), lr=lr)
 
 train(model1, optimiser, mb_size, epochs)
 

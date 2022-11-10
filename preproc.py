@@ -5,6 +5,11 @@ import scipy.io
 import glob
 import tensorflow as tf
 
+
+
+####### PREPROCESAMIENTO, EL CUAL NOS PERMITE SEPARAR LOS EEGs en segundos para entrenar las redes neuronales ################
+
+
 #obten todos los archivos matlab de la carpeta
 matfiles = glob.glob('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/Preprocesseddatamat/*.mat')
 
@@ -73,16 +78,5 @@ for mat_file in data:
 
 
 
-#f = h5py.File('matlab_matrix.mat','r')
-#mat = scipy.io.loadmat('matlab_matrix.mat')
-#print(f['data'])
-#scipy.io.savemat("matlab_matrix.mat", f['data'][0:14,0:128,0])
-#n1 = np.array(f['data'][0,0:128,0:14])
-#n1 = n1.transpose()
-#nf = open('prueba.mat','w')
-#nf.write(f['data'][0:14,0:128,0])
-#mdic = {"data": n1, "label": "data"}
-#scipy.io.savemat("matlab_matrix.mat", mdic)
-#print(n1.shape)
 
 

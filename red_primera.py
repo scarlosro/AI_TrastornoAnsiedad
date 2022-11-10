@@ -14,6 +14,9 @@ from keras.layers import Reshape
 from tensorflow.keras import datasets, layers, models
 import matplotlib.pyplot as plt
 
+from tensorflow.keras.utils import plot_model
+
+
 
 def write_h5file():
 
@@ -86,14 +89,15 @@ def red_neuro ():
     train_x, train_y = load_Dataset_from_h5file('./train.h5')
     #test_x, test_y = load_Dataset_from_h5file('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote_26/h5.h5')
     test_x, test_y = load_Dataset_from_h5file('./test.h5')
-
+    
+    print(train_x.shape)
 
 
 #preguntar lo de las capaz
 #preguntar meter por mini batch
 #cambiar a 1d conv1d
     model = models.Sequential()
-    model.add(Reshape((1,14,128), input_shape=(14, 128)))
+    model.add(Reshape((1,1,1792), input_shape=(1, 1792)))
     model.add(layers.Conv1D(2,(3), activation='relu'))
     model.add(layers.MaxPooling1D(3))
     model.add(layers.Conv1D(2,(3), activation='relu'))
@@ -111,6 +115,8 @@ def red_neuro ():
                         validation_data=(test_x, test_y))
 
     test_loss, test_acc = model.evaluate(test_x,  test_y, verbose=2)
+
+    plot_model(model, to_file='model1.png')
 
     print(test_acc)
 
@@ -182,3 +188,5 @@ def separar_lista(l: list) -> np.array:
 
 #print(ligeros_eeg)
 '''
+
+
