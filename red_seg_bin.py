@@ -10,6 +10,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from tensorflow.keras.utils import plot_model
+from sklearn.metrics import confusion_matrix, classification_report
+
 
 import h5py
 
@@ -110,9 +112,9 @@ x_test = normalise(x_mean, x_std, test_x)
 x_train.mean(), x_train.std()
 
 
-print("El tamaño de train  es ", x_train.shape)
-print("El tamaño de test  es ", x_test.shape)
-print(train_y.shape)
+#print("El tamaño de train  es ", x_train.shape)
+#print("El tamaño de test  es ", x_test.shape)
+#print(train_y.shape)
 
 
 def create_minibatches(x, y, mb_size, shuffle = True):
@@ -138,8 +140,16 @@ y_train_tensor = torch.tensor(train_y.copy())
 #x_val_tensor = torch.tensor(x_val.copy())
 #y_val_tensor = torch.tensor(y_val.copy())
 
+validation_x = x_test[:int(len(test_x)*.50)]
+validation_y = test_y[:int(len(test_y)*.50)]
+x_test = x_test[:int(len(test_x)*.50):]
+test_y = test_y[:int(len(test_y)*.50):]
+
 x_test_tensor = torch.tensor(x_test.copy())
 y_test_tensor = torch.tensor(test_y.copy())
+x_validation_tensor = torch.tensor(validation_x.copy())
+
+
 
 if torch.cuda.is_available():
     device = torch.device('cuda')
@@ -189,8 +199,8 @@ def train(model, optimiser, mb_size, epochs=10):
 hidden1 = 1000 
 hidden = 1000
 lr = .001
-epochs = 1000
-mb_size = 60
+epochs = 50
+mb_size = 50
 model1 = nn.Sequential(nn.Linear(in_features=1792, out_features=hidden1), nn.ReLU(),
                        nn.Linear(in_features=hidden1, out_features=hidden), nn.ReLU(),
                        nn.Linear(in_features=hidden, out_features=2))
@@ -200,4 +210,25 @@ train(model1, optimiser, mb_size, epochs)
 
 print(accuracy(model1, x_test_tensor,  y_test_tensor, mb_size))
 
-plot_model(model, to_file='model3.png')
+y_pred = []
+
+# iterate over test data
+for n, inputs in enumerate(x_validation_tensor):
+        output = model1(inputs) # Feed Network
+        #print(output)
+        _, pred = output.max(dim=0) 
+        #print(pred.item())
+        y_pred.append(pred.item())
+
+        
+   
+
+validation_y = np.squeeze(validation_y)
+#print(validation_y)
+#print(y_pred)
+# Build confusion matrix
+print('Confusion Matrix')
+print(confusion_matrix(validation_y, y_pred))
+
+
+print(classification_report(validation_y, y_pred))

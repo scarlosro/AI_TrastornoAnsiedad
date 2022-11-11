@@ -106,6 +106,8 @@ model.compile(optimizer='adam',
 
 model.fit(train_x, train_y, epochs=50)
 
+
+
 test_loss, test_acc = model.evaluate(test_x,  test_y, verbose=2)
 
 print('\nTest accuracy:', test_acc)

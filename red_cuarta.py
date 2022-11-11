@@ -17,17 +17,7 @@ import h5py
 
 direc = glob.glob('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote*')
 
-'''
-def dividirTestAndTrain(name_file,no_lote):
-    path = os.getcwd()
 
-    for i in range(5):
-        no_arch = random.randint(0,len(lista)-1)
-        archivo = lista[no_arch]
-        shutil.copy2(archivo,path_create, follow_symlinks=True)
-        lista.remove(archivo)
-
-'''
 
 def load_Dataset_from_h5file(h5file_path):
 
@@ -59,9 +49,9 @@ train_x, train_y = load_Dataset_from_h5file('./trainA.h5')
 #test_x, test_y = load_Dataset_from_h5file('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote_26/h5.h5')
 test_x, test_y = load_Dataset_from_h5file('./testA.h5')
 
-print(train_x.shape)
+#print(train_x.shape)
 train_x = train_x.reshape(train_x.shape[0], train_x.shape[1], 1)
-print(train_x.shape)
+#print(train_x.shape)
 
 
 model = Sequential()
