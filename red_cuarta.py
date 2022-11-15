@@ -7,7 +7,7 @@ from numpy import unique
 from keras.callbacks import EarlyStopping
 from sklearn.metrics import ConfusionMatrixDisplay
 from tensorflow.keras.utils import plot_model
-
+import random
 
 
 # Librerias de ayuda
@@ -44,10 +44,10 @@ def load_Dataset_from_h5file(h5file_path):
 
 
 # train_x, train_y = load_Dataset_from_h5file('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote_1/h5.h5')
-train_x, train_y = load_Dataset_from_h5file('./trainA.h5')
+train_x, train_y = load_Dataset_from_h5file('./train.h5')
 #print(train_x[0].shape)
 #test_x, test_y = load_Dataset_from_h5file('/Users/carlossanchez/Desktop/AI_TrastornoAnsiedad/lote_26/h5.h5')
-test_x, test_y = load_Dataset_from_h5file('./testA.h5')
+test_x, test_y = load_Dataset_from_h5file('./test.h5')
 
 #print(train_x.shape)
 train_x = train_x.reshape(train_x.shape[0], train_x.shape[1], 1)
@@ -68,35 +68,46 @@ model.compile(loss = 'sparse_categorical_crossentropy',
               metrics = ['accuracy'])
 model.summary()
 #model.fit(train_x, train_y, batch_size=15,epochs=100)
-model.fit(train_x, train_y,epochs=50)
+model.fit(train_x, train_y,epochs=3)
 
 test_loss, test_acc = model.evaluate(test_x,  test_y, verbose=2)
 
 print('\nTest accuracy:', test_acc)
-#plot_model(model, to_file='model1.png')
+#
+plot_model(model, to_file='model1b.png',show_shapes=True,
+    show_dtype=True,
+    show_layer_names=True,)
 
 
 
-#test_y = np.squeeze(np.asarray(test_y))
-#y_prediction = model.predict(test_x)
+test_y = np.squeeze(np.asarray(test_y))
+
+#print(len(train_x))
+
+y_prediction = model.predict(test_x)
 #y_prediction = y_prediction.flatten()
 
 #y_prediction = np.where(y_prediction > 0.5, 1, 0)
-#print(y_prediction)
+n=random.randint(0,len(test_x))
+#print(y_prediction[n])
+#print(test_y[n])
+pred = np.argmax(y_prediction[n])
+y_true = test_y[n]
 
 
-#print(test_y.shape, y_prediction.shape)
+print('\n\n ----------- PREDICCIÓN -----------------\n')
 
-#tn, fp, fn, tp = confusion_matrix(test_y, y_prediction).ravel()
-#print('Confusion Matrix')
-#print(pred)
-#print(' TN ', tn, ' fp ',fp, ' fn ', fn ,' tp ', tp)
+frase = ' Se predijo que el paciente tiene ansiedad nivel:' 
+if pred == 0:
+    print(frase + ' ligera')
+elif pred == 1:
+    print(frase + ' moderada')
+elif pred == 2:
+    print(frase + ' normal')
+elif pred == 3:
+    print(frase + ' severa')
 
-'''
-pred = model.predict(test_x)
-pred_y = pred.argmax(axis=1)
-
-cm = confusion_matrix(test_y, pred_y)
-print(cm)
-
-'''
+if pred == y_true:
+    print("La predicción es correcta")
+else:
+    print("La predicción es incorrecta")
